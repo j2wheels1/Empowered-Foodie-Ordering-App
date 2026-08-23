@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Empowered Foodie — Weekly Menu & Orders</title>
+<meta name="description" content="This week's menu and order requests for Empowered Foodie.">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="assets/favicon-64.png">
+<link rel="apple-touch-icon" href="assets/favicon-180.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <img class="logo" src="assets/logo.png" alt="Empowered Foodie">
+    <p class="brand-tagline">Infused with Love by Empowered Foodie</p>
+    <nav>
+      <a href="#menu">This Week's Menu</a>
+      <a href="#order">Order</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <p class="eyebrow">Fresh · Weekly · Made to Order</p>
+    <h1>See what's cooking this week, then tell us exactly how you like it.</h1>
+    <p class="lede">Browse the current menu, flag any allergies or preferences, and leave notes for your chef — all in one place. No accounts, no payment collected here.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="#order">Start an Order Request</a>
+      <a class="btn btn-ghost" href="#menu">View Menu</a>
+    </div>
+  </div>
+</section>
+
+<section id="menu" class="block">
+  <div class="wrap">
+    <h2>This Week's Menu</h2>
+    <p class="block-sub">Updated directly by your chef each week — check back for what's fresh.</p>
+    <p id="menu-status">Loading this week's menu…</p>
+    <div id="menu-board"></div>
+  </div>
+</section>
+
+<section id="order" class="block">
+  <div class="wrap">
+    <h2>Order Request</h2>
+    <p class="block-sub">Fill this out to request items from this week's menu. Your chef will follow up to confirm and arrange payment separately.</p>
+
+    <div class="no-payment-note">
+      This form does not collect payment. It's a request — your chef will reach out to confirm details and arrange payment the way you normally do.
+    </div>
+
+    <form id="order-form" novalidate>
+
+      <div class="form-group">
+        <label for="f-name">Full name</label>
+        <input type="text" id="f-name" name="name" required>
+      </div>
+
+      <div class="form-group">
+        <label for="f-email">Email</label>
+        <input type="email" id="f-email" name="email" required>
+      </div>
+
+      <div class="form-group">
+        <label for="f-phone">Phone <span class="hint" style="display:inline">(optional)</span></label>
+        <input type="tel" id="f-phone" name="phone">
+      </div>
+
+      <div class="form-group">
+        <label>Menu items</label>
+        <span class="hint">Check off what you'd like. For soups, lunch bowls, mains, and comfort foods, tell us how many servings.</span>
+        <div id="item-picker"><!-- populated from live menu --></div>
+      </div>
+
+      <div class="form-group">
+        <fieldset>
+          <legend>Allergies</legend>
+          <div class="checkbox-grid" id="allergy-grid">
+            <label class="checkbox-row"><input type="checkbox" name="allergies" value="Dairy"> Dairy</label>
+            <label class="checkbox-row"><input type="checkbox" name="allergies" value="Gluten"> Gluten</label>
+            <label class="checkbox-row"><input type="checkbox" name="allergies" value="Tree Nuts"> Tree Nuts</label>
+            <label class="checkbox-row"><input type="checkbox" name="allergies" value="Peanuts"> Peanuts</label>
+            <label class="checkbox-row"><input type="checkbox" name="allergies" value="Shellfish"> Shellfish</label>
+            <label class="checkbox-row"><input type="checkbox" name="allergies" value="Fish"> Fish</label>
+            <label class="checkbox-row"><input type="checkbox" name="allergies" value="Soy"> Soy</label>
+            <label class="checkbox-row"><input type="checkbox" name="allergies" value="Eggs"> Eggs</label>
+            <label class="checkbox-row"><input type="checkbox" name="allergies" value="Corn"> Corn</label>
+          </div>
+        </fieldset>
+      </div>
+
+      <div class="form-group">
+        <label for="f-allergies-other">Other allergies <span class="hint" style="display:inline">(optional)</span></label>
+        <input type="text" id="f-allergies-other" name="allergiesOther" placeholder="e.g. sesame, nightshades">
+      </div>
+
+      <div class="form-group">
+        <fieldset>
+          <legend>Dietary preferences</legend>
+          <div class="checkbox-grid" id="preference-grid">
+            <label class="checkbox-row"><input type="checkbox" name="preferences" value="Vegetarian"> Vegetarian</label>
+            <label class="checkbox-row"><input type="checkbox" name="preferences" value="Vegan"> Vegan</label>
+            <label class="checkbox-row"><input type="checkbox" name="preferences" value="Low-Carb"> Low-Carb</label>
+            <label class="checkbox-row"><input type="checkbox" name="preferences" value="Low-Sodium"> Low-Sodium</label>
+            <label class="checkbox-row"><input type="checkbox" name="preferences" value="Organic Preferred"> Organic Preferred</label>
+            <label class="checkbox-row"><input type="checkbox" name="preferences" value="Light on Oil/Cream"> Light on Oil/Cream</label>
+          </div>
+        </fieldset>
+      </div>
+
+      <div class="form-group">
+        <label for="f-notes">Special requests or notes</label>
+        <span class="hint">Substitutions, spice level, portion sizing, anything your chef should know for this order.</span>
+        <textarea id="f-notes" name="notes" placeholder="e.g. light on garlic, extra sauce on the side, small portions this week"></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Submit Order Request</button>
+      <div id="order-status" role="status"></div>
+    </form>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>&copy; <span id="year"></span> Empowered Foodie</span>
+    <a href="mailto:hello@empoweredfoodie.com" id="footer-email">hello@empoweredfoodie.com</a>
+    <div class="footer-tagline">Infused with Love by Empowered Foodie</div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="assets/config.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>
