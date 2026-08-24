@@ -14,7 +14,7 @@ window.EF_CONFIG = {
   // 2) ORDER SUBMISSIONS
   // Paste the Web App URL you get after deploying the Apps Script in
   // /apps-script/Code.gs. This is where order requests get saved.
-  ORDERS_ENDPOINT_URL: "https://docs.google.com/spreadsheets/d/1rVdWr2BJnMYG7vsdFi7IDuzinO7zDakGBvA6DU2Bkys/edit?gid=0#gid=0",
+  ORDERS_ENDPOINT_URL: "https://script.google.com/macros/s/AKfycbyPnnPYGw4h59bdAJPDxOEIfWfgNCdInVM0bDtbZPnVDJ0_ONHvxBZuGPxHSRjTjnhN/exec",
 
   // Business info shown in the footer / confirmation message.
   BUSINESS_NAME: "Empowered Foodie",
