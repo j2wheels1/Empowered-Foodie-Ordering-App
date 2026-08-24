@@ -229,9 +229,9 @@
     const form = e.target;
     const statusEl = document.getElementById("order-status");
 
-    if (!form.name.value.trim() || !form.email.value.trim()) {
+    if (!form.name.value.trim() || !form.email.value.trim() || !form.phone.value.trim()) {
       statusEl.className = "error";
-      statusEl.textContent = "Please add your name and email before submitting.";
+      statusEl.textContent = "Please add your name, email, and phone number before submitting.";
       return;
     }
 
