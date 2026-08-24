@@ -239,14 +239,15 @@
     let allergies = collectChecked("allergies");
     if (allergiesOther) allergies = allergies ? `${allergies}, ${allergiesOther}` : allergiesOther;
 
-    const payload = new FormData();
-    payload.append("name", form.name.value.trim());
-    payload.append("email", form.email.value.trim());
-    payload.append("phone", form.phone.value.trim());
-    payload.append("items", collectSelectedItems());
-    payload.append("allergies", allergies);
-    payload.append("preferences", collectChecked("preferences"));
-    payload.append("notes", form.notes.value.trim());
+    const fields = {
+      name: form.name.value.trim(),
+      email: form.email.value.trim(),
+      phone: form.phone.value.trim(),
+      items: collectSelectedItems(),
+      allergies: allergies,
+      preferences: collectChecked("preferences"),
+      notes: form.notes.value.trim(),
+    };
 
     if (!cfg.ORDERS_ENDPOINT_URL || cfg.ORDERS_ENDPOINT_URL.indexOf("PASTE_YOUR") === 0) {
       statusEl.className = "error";
@@ -258,23 +259,49 @@
     submitBtn.disabled = true;
     submitBtn.textContent = "Sending…";
 
-    // Apps Script + no-cors: we can't read the response, so we treat
-    // a completed fetch as success. Errors (network down, wrong URL)
-    // still surface via .catch().
-    fetch(cfg.ORDERS_ENDPOINT_URL, { method: "POST", mode: "no-cors", body: payload })
-      .then(() => {
-        statusEl.className = "success";
-        statusEl.textContent = "Thanks! Your order request has been received. We'll follow up to confirm details — no payment was collected here.";
-        form.reset();
-      })
-      .catch(() => {
-        statusEl.className = "error";
-        statusEl.textContent = "Something went wrong sending your request. Please try again or email us directly.";
-      })
-      .finally(() => {
-        submitBtn.disabled = false;
-        submitBtn.textContent = "Submit Order Request";
-      });
+    submitViaHiddenForm(cfg.ORDERS_ENDPOINT_URL, fields);
+
+    // Submitting into a hidden cross-origin iframe means we can't read
+    // back whether Apps Script succeeded, so we confirm optimistically
+    // once the browser has had a moment to dispatch it. This is the
+    // standard, most reliable way to post form data into an Apps
+    // Script Web App from a static site.
+    setTimeout(() => {
+      statusEl.className = "success";
+      statusEl.textContent = "Thanks! Your order request has been received. We'll follow up to confirm details — no payment was collected here.";
+      form.reset();
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Submit Order Request";
+    }, 800);
+  }
+
+  function submitViaHiddenForm(url, fields) {
+    let iframe = document.getElementById("ef-hidden-submit-frame");
+    if (!iframe) {
+      iframe = document.createElement("iframe");
+      iframe.id = "ef-hidden-submit-frame";
+      iframe.name = "ef-hidden-submit-frame";
+      iframe.style.display = "none";
+      document.body.appendChild(iframe);
+    }
+
+    const tempForm = document.createElement("form");
+    tempForm.action = url;
+    tempForm.method = "POST";
+    tempForm.target = "ef-hidden-submit-frame";
+    tempForm.style.display = "none";
+
+    Object.keys(fields).forEach((key) => {
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = key;
+      input.value = fields[key];
+      tempForm.appendChild(input);
+    });
+
+    document.body.appendChild(tempForm);
+    tempForm.submit();
+    document.body.removeChild(tempForm);
   }
 
   document.getElementById("order-form").addEventListener("submit", handleSubmit);

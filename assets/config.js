@@ -9,12 +9,12 @@ window.EF_CONFIG = {
   // Publish your weekly menu Google Sheet to the web as a CSV, then
   // paste that URL here. Editing the sheet updates the live site —
   // no code changes, no redeploy.
-  MENU_CSV_URL: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ61rQdyqy3FV_132soqKWLzL-lJJXEvErcaUIFDsnG8XYQ6PobB3dh56G-y_h9AzJ3Ei6C-z6ic2T9/pub?output=csv",
+  MENU_CSV_URL: "PASTE_YOUR_PUBLISHED_MENU_SHEET_CSV_URL_HERE",
 
   // 2) ORDER SUBMISSIONS
   // Paste the Web App URL you get after deploying the Apps Script in
   // /apps-script/Code.gs. This is where order requests get saved.
-  ORDERS_ENDPOINT_URL: "https://script.google.com/macros/s/AKfycbyPnnPYGw4h59bdAJPDxOEIfWfgNCdInVM0bDtbZPnVDJ0_ONHvxBZuGPxHSRjTjnhN/exec",
+  ORDERS_ENDPOINT_URL: "PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE",
 
   // Business info shown in the footer / confirmation message.
   BUSINESS_NAME: "Empowered Foodie",
