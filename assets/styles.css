@@ -212,6 +212,14 @@ section.block + section.block { border-top: 1px solid var(--line); }
   color: #8a8d9c;
 }
 
+.category-note {
+  font-family: var(--font-body);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 0.8rem;
+  color: #8a8d9c;
+}
+
 .menu-item {
   display: flex;
   justify-content: space-between;

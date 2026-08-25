@@ -77,7 +77,8 @@
 
       const catHeading = document.createElement("div");
       catHeading.className = "menu-category-heading";
-      catHeading.innerHTML = `<h3>${escapeHtml(cat)}</h3><span class="count">${catItems.length} item${catItems.length === 1 ? "" : "s"}</span>`;
+      const note = categoryOrderNote(cat);
+      catHeading.innerHTML = `<h3>${escapeHtml(cat)}</h3><span class="count">${catItems.length} item${catItems.length === 1 ? "" : "s"}</span>${note ? `<span class="category-note">${escapeHtml(note)}</span>` : ""}`;
       catBlock.appendChild(catHeading);
 
       catItems.forEach((item) => {
@@ -103,11 +104,19 @@
   // Categories where a serving count doesn't apply — clients just check
   // the item off (e.g. a batch of muffins or a tub of hummus, not a
   // per-person serving).
-  const NO_SERVINGS_CATEGORIES = ["breakfast", "baked goods", "dip"];
+  const NO_SERVINGS_CATEGORIES = ["breakfast", "baked goods", "dip", "soup"];
 
   function categoryNeedsServings(category) {
     const lower = category.toLowerCase();
     return !NO_SERVINGS_CATEGORIES.some((kw) => lower.includes(kw));
+  }
+
+  // Short note on how a category is sold, shown next to its heading.
+  function categoryOrderNote(category) {
+    const lower = category.toLowerCase();
+    if (lower.includes("breakfast") || lower.includes("baked goods")) return "Sold by the dozen";
+    if (lower.includes("dip") || lower.includes("soup")) return "Sold by the batch";
+    return "";
   }
 
   // ---------- Rendering: item picker on order form (same category grouping) ----------
@@ -123,9 +132,10 @@
     const byCat = groupByCategory(items);
     Object.keys(byCat).forEach((cat) => {
       const needsServings = categoryNeedsServings(cat);
+      const orderNote = categoryOrderNote(cat);
       const catEl = document.createElement("div");
       catEl.className = "item-picker-category";
-      catEl.innerHTML = `<h4>${escapeHtml(cat)}</h4>`;
+      catEl.innerHTML = `<h4>${escapeHtml(cat)}${orderNote ? ` <span class="category-note">${escapeHtml(orderNote)}</span>` : ""}</h4>`;
 
       byCat[cat].forEach((item, idx) => {
         const checkId = `chk-${cat}-${idx}`.replace(/\s+/g, "-");
