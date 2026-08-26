@@ -342,6 +342,36 @@ fieldset {
   padding-bottom: 6px;
 }
 
+.category-notes-row {
+  margin-top: 8px;
+}
+
+.category-notes-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #8a8d9c;
+  margin-bottom: 4px;
+}
+
+.category-notes-input {
+  width: 100%;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--white);
+  color: var(--ink);
+}
+
+.category-notes-input:focus {
+  outline: 2px solid var(--gold);
+  outline-offset: 1px;
+}
+
 .item-row {
   display: flex;
   align-items: center;
