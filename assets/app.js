@@ -158,6 +158,16 @@
         catEl.appendChild(row);
       });
 
+      const catNoteId = `notes-${cat}`.replace(/\s+/g, "-");
+      const noteRow = document.createElement("div");
+      noteRow.className = "category-notes-row";
+      noteRow.innerHTML = `
+        <label class="category-notes-label" for="${catNoteId}">Notes for ${escapeHtml(cat)} <span class="hint" style="display:inline">(optional)</span></label>
+        <input type="text" id="${catNoteId}" class="category-notes-input" data-category="${escapeAttr(cat)}"
+               placeholder="e.g. extra spicy, no cilantro">
+      `;
+      catEl.appendChild(noteRow);
+
       picker.appendChild(catEl);
     });
   }
@@ -234,6 +244,16 @@
       .join(", ");
   }
 
+  function collectCategoryNotes() {
+    const inputs = document.querySelectorAll(".category-notes-input");
+    const parts = [];
+    inputs.forEach((input) => {
+      const val = input.value.trim();
+      if (val) parts.push(`${input.dataset.category}: ${val}`);
+    });
+    return parts.join(" | ");
+  }
+
   function handleSubmit(e) {
     e.preventDefault();
     const form = e.target;
@@ -249,6 +269,10 @@
     let allergies = collectChecked("allergies");
     if (allergiesOther) allergies = allergies ? `${allergies}, ${allergiesOther}` : allergiesOther;
 
+    const categoryNotes = collectCategoryNotes();
+    const generalNotes = form.notes.value.trim();
+    const combinedNotes = [categoryNotes, generalNotes].filter(Boolean).join(" | ");
+
     const fields = {
       name: form.name.value.trim(),
       email: form.email.value.trim(),
@@ -256,7 +280,7 @@
       items: collectSelectedItems(),
       allergies: allergies,
       preferences: collectChecked("preferences"),
-      notes: form.notes.value.trim(),
+      notes: combinedNotes,
     };
 
     if (!cfg.ORDERS_ENDPOINT_URL || cfg.ORDERS_ENDPOINT_URL.indexOf("PASTE_YOUR") === 0) {
