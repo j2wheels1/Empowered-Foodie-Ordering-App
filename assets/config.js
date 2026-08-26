@@ -18,6 +18,5 @@ window.EF_CONFIG = {
 
   // Business info shown in the footer / confirmation message.
   BUSINESS_NAME: "Empowered Foodie",
-  CONTACT_EMAIL: "Chefcass@empoweredfoodie.com",
+  CONTACT_EMAIL: "hello@empoweredfoodie.com",
   TAGLINE: "Infused with Love by Empowered Foodie"
-};
