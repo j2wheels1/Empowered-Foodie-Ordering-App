@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order History — Empowered Foodie</title>
+<meta name="description" content="View your past orders with Empowered Foodie.">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="assets/favicon-64.png">
+<link rel="apple-touch-icon" href="assets/favicon-180.png">
+
+<link rel="manifest" href="assets/manifest.json">
+<meta name="theme-color" content="#0d2e4b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Emp. Foodie">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <img class="logo" src="assets/logo.png" alt="Empowered Foodie">
+    <p class="brand-tagline">Infused with Love by Empowered Foodie</p>
+    <nav>
+      <a href="index.html#menu">This Week's Menu</a>
+      <a href="index.html#order">Order</a>
+      <a href="history.html">Order History</a>
+    </nav>
+  </div>
+</header>
+
+<section class="block">
+  <div class="wrap">
+    <h2>Order History</h2>
+    <p class="block-sub">See everything you've ordered with us before. No account or password needed — just a quick one-time link sent to your email.</p>
+
+    <div id="history-request">
+      <div class="form-group">
+        <label for="h-email">Email</label>
+        <input type="email" id="h-email" placeholder="you@example.com" required>
+      </div>
+      <button id="request-history-btn" class="btn btn-primary" type="button">Email Me My Order History Link</button>
+      <div id="request-status" role="status"></div>
+    </div>
+
+    <div id="history-results" style="display:none;"></div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>&copy; <span id="year"></span> Empowered Foodie</span>
+    <a href="mailto:hello@empoweredfoodie.com" id="footer-email">hello@empoweredfoodie.com</a>
+    <div class="footer-tagline">Infused with Love by Empowered Foodie</div>
+  </div>
+</footer>
+
+<script src="assets/config.js"></script>
+<script src="assets/history.js"></script>
+</body>
+</html>
