@@ -56,51 +56,6 @@
     return byCat;
   }
 
-  // ---------- Rendering: menu board (one heading, categories below it) ----------
-  function renderMenuBoard(items) {
-    const board = document.getElementById("menu-board");
-    const status = document.getElementById("menu-status");
-    board.innerHTML = "";
-
-    if (!items.length) {
-      status.textContent = "No menu items are published yet — check back soon.";
-      return;
-    }
-
-    status.textContent = "Updated live from this week's menu sheet.";
-
-    const byCat = groupByCategory(items);
-    Object.keys(byCat).forEach((cat) => {
-      const catItems = byCat[cat];
-      const catBlock = document.createElement("div");
-      catBlock.className = "menu-category-block";
-
-      const catHeading = document.createElement("div");
-      catHeading.className = "menu-category-heading";
-      const note = categoryOrderNote(cat);
-      catHeading.innerHTML = `<h3>${escapeHtml(cat)}</h3><span class="count">${catItems.length} item${catItems.length === 1 ? "" : "s"}</span>${note ? `<span class="category-note">${escapeHtml(note)}</span>` : ""}`;
-      catBlock.appendChild(catHeading);
-
-      catItems.forEach((item) => {
-        const row = document.createElement("div");
-        row.className = "menu-item";
-        const tags = item.allergens
-          .map((a) => `<span class="tag tag-allergen">${escapeHtml(a)}</span>`)
-          .join("");
-        row.innerHTML = `
-          <div>
-            <div class="menu-item-name">${escapeHtml(item.item)}</div>
-            ${item.description ? `<div class="menu-item-desc">${escapeHtml(item.description)}</div>` : ""}
-            ${tags ? `<div class="tag-row">${tags}</div>` : ""}
-          </div>
-        `;
-        catBlock.appendChild(row);
-      });
-
-      board.appendChild(catBlock);
-    });
-  }
-
   // Categories where a serving count doesn't apply — clients just check
   // the item off (e.g. a batch of muffins or a tub of hummus, not a
   // per-person serving).
@@ -199,22 +154,22 @@
 
   // ---------- Load menu ----------
   function loadMenu() {
-    const status = document.getElementById("menu-status");
+    const picker = document.getElementById("item-picker");
     if (!cfg.MENU_CSV_URL || cfg.MENU_CSV_URL.indexOf("PASTE_YOUR") === 0) {
-      status.textContent = "Menu sheet isn't connected yet — see README.md to set MENU_CSV_URL.";
+      picker.innerHTML = '<p class="hint">Menu sheet isn\'t connected yet — see README.md to set MENU_CSV_URL.</p>';
       return;
     }
+    picker.innerHTML = '<p class="hint">Loading this week\'s menu…</p>';
     Papa.parse(cfg.MENU_CSV_URL, {
       download: true,
       header: true,
       skipEmptyLines: true,
       complete: (results) => {
         const items = normalizeRows(results.data);
-        renderMenuBoard(items);
         renderItemPicker(items);
       },
       error: () => {
-        status.textContent = "Couldn't load the menu right now. Double-check MENU_CSV_URL in config.js.";
+        picker.innerHTML = '<p class="hint">Couldn\'t load the menu right now. Double-check MENU_CSV_URL in config.js.</p>';
       },
     });
   }

@@ -178,87 +178,13 @@ section.block + section.block { border-top: 1px solid var(--line); }
   max-width: 60ch;
 }
 
-/* ---------- Menu board (signature element) ---------- */
-#menu-status {
-  font-family: var(--font-mono);
-  font-size: 0.85rem;
-  color: var(--herb);
-  margin-bottom: 18px;
-}
-
-.menu-category-block {
-  margin-bottom: 30px;
-}
-
-.menu-category-heading {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-  border-bottom: 2px solid var(--navy);
-  padding-bottom: 8px;
-  margin-bottom: 14px;
-}
-
-.menu-category-heading h3 {
-  font-family: var(--font-display);
-  font-size: 1.3rem;
-  color: var(--navy-deep);
-  margin: 0;
-}
-
-.menu-category-heading .count {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  color: #8a8d9c;
-}
-
+/* ---------- Category note (used in the order form's item picker) ---------- */
 .category-note {
   font-family: var(--font-body);
   font-style: italic;
   font-weight: 400;
   font-size: 0.8rem;
   color: #8a8d9c;
-}
-
-.menu-item {
-  display: flex;
-  justify-content: space-between;
-  gap: 18px;
-  padding: 10px 0;
-  border-bottom: 1px dashed var(--line);
-}
-
-.menu-item:last-child { border-bottom: none; }
-
-.menu-item-name {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 1.05rem;
-  color: var(--ink);
-}
-
-.menu-item-desc {
-  color: #63667a;
-  font-size: 0.92rem;
-  margin-top: 2px;
-}
-
-.tag-row { margin-top: 6px; display: flex; gap: 6px; flex-wrap: wrap; }
-
-.tag {
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  padding: 2px 8px;
-  border-radius: 999px;
-  background: var(--herb-tint);
-  color: var(--herb);
-}
-
-.tag.tag-allergen {
-  background: var(--alert-tint);
-  color: var(--alert);
 }
 
 /* ---------- Order form ---------- */
