@@ -83,7 +83,10 @@
     return card;
   }
 
+  let allOrders = [];
+
   function renderHistory(orders) {
+    allOrders = orders;
     const results = document.getElementById("history-results");
     results.style.display = "block";
     results.innerHTML = "";
@@ -93,8 +96,54 @@
       return;
     }
 
+    if (orders.length > 1) {
+      const searchWrap = document.createElement("div");
+      searchWrap.className = "form-group";
+      searchWrap.innerHTML = `
+        <label for="history-search">Search Your Orders</label>
+        <input type="text" id="history-search" placeholder="Search by dish, date, or note…">
+      `;
+      results.appendChild(searchWrap);
+      document.getElementById("history-search").addEventListener("input", (e) => {
+        filterOrders(e.target.value);
+      });
+    }
+
+    const list = document.createElement("div");
+    list.id = "history-order-list";
+    results.appendChild(list);
+
     orders.forEach((order) => {
-      results.appendChild(renderOrderCard(order));
+      list.appendChild(renderOrderCard(order));
+    });
+  }
+
+  function filterOrders(query) {
+    const list = document.getElementById("history-order-list");
+    if (!list) return;
+    list.innerHTML = "";
+
+    const q = query.trim().toLowerCase();
+    const filtered = !q
+      ? allOrders
+      : allOrders.filter((order) => {
+          const haystack = [
+            order.items,
+            order.allergies,
+            order.preferences,
+            order.notes,
+            formatDate(order.timestamp),
+          ].join(" ").toLowerCase();
+          return haystack.includes(q);
+        });
+
+    if (!filtered.length) {
+      list.innerHTML = '<p class="hint">No orders match your search.</p>';
+      return;
+    }
+
+    filtered.forEach((order) => {
+      list.appendChild(renderOrderCard(order));
     });
   }
 
