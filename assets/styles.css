@@ -490,6 +490,14 @@ fieldset {
 
 .site-footer a { color: var(--gold); }
 
+.footer-icon-link {
+  display: inline-flex;
+  align-items: center;
+  line-height: 0;
+}
+
+.footer-icon-link:hover { color: var(--gold-tint); }
+
 /* ---------- Responsive ---------- */
 @media (max-width: 640px) {
   .site-header .wrap { flex-wrap: wrap; }
