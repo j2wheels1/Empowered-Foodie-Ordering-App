@@ -257,7 +257,7 @@
     // Script Web App from a static site.
     setTimeout(() => {
       statusEl.className = "success";
-      statusEl.textContent = "Thanks! Your order request has been received. We'll follow up to confirm details — no payment was collected here.";
+      statusEl.textContent = "Thanks! Your order request has been received. Payment is collected at time of delivery.";
       form.reset();
       submitBtn.disabled = false;
       submitBtn.textContent = "Submit Order Request";
