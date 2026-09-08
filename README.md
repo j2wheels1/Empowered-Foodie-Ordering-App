@@ -64,20 +64,43 @@ The website reads the sheet live — no redeploy needed.
 
 ## 3. Set up order requests (Google Apps Script)
 
-1. Create a new Google Sheet for orders (or a new tab in your existing one). Name the tab exactly **Orders**.
+1. Create a new Google Sheet for orders (or use your existing one). Name the tab exactly **Orders**.
 2. In row 1, add these headers:
 
    `Timestamp | Name | Email | Phone | Items | Allergies | Preferences | Notes`
 
-3. In that Sheet, go to **Extensions > Apps Script**.
-4. Delete any starter code in the editor, then paste in the contents of `apps-script/Code.gs` from this project.
-5. **Grant email permission (one time only):** in the toolbar, use the function dropdown (next to the Debug button) to select `testEmailPermission`, then click **Run**. Google will show a permission screen — click "Advanced" then "Go to project (unsafe)", then **Allow**. You should get a test email in your own inbox within a minute or two — that confirms it's working. You only need to do this once, ever.
-6. Click **Deploy > New deployment**.
-7. Click the gear icon next to "Select type" and choose **Web app**.
-8. Set **Execute as** to `Me`, and **Who has access** to `Anyone`. Click **Deploy**.
-9. Authorize it with your Google account when prompted (same "Advanced" > "Go to project (unsafe)" step as above — this is expected for personal scripts).
-10. Copy the **Web app URL** it gives you.
-11. In `assets/config.js`, paste that URL as the value of `ORDERS_ENDPOINT_URL`. Commit changes.
+3. In that **same** Google Sheet, add a **second tab** named exactly **Client Contacts**. In row 1, add:
+
+   `Name | Email | Phone | Last Updated`
+
+   This tab stays private forever — **never share this spreadsheet file with staff.** It's what the script uses behind the scenes to reliably recognize returning clients by email, without exposing that email anywhere staff can see.
+
+4. Add a **third tab**, also in the same sheet, named exactly **History Tokens**. In row 1, add:
+
+   `Token | Email | Created At | Expires At`
+
+   Also private, also never shared. This one powers the "Order History" page on the site — when a client asks to see their past orders, this tab stores a one-time link tied to their email for 24 hours.
+
+5. Now create a **completely separate, second Google Sheet file** — a new file, not another tab. Name it something like "Empowered Foodie — Client Profiles." Add one tab named exactly **Client Profiles**, with row 1 as:
+
+   `Name | Allergies | Preferences | Standing Notes | Last Updated`
+
+   No email or phone column exists here at all. **This is the file you share with your team** — click **Share** (top right) and add each team member's Google account. Because it's a separate file from Orders/Client Contacts, sharing it can never expose anything beyond what's in this one tab.
+
+6. Copy this new sheet's ID from its URL — it's the long string between `/d/` and `/edit`:
+
+   `docs.google.com/spreadsheets/d/`**`THIS_PART`**`/edit`
+
+7. Back in your **Orders** sheet, go to **Extensions > Apps Script**.
+8. Delete any starter code in the editor, then paste in the contents of `apps-script/Code.gs` from this project.
+9. Near the top of the file, find `CLIENT_PROFILES_SPREADSHEET_ID` and paste in the ID you copied in step 6. While you're there, double-check `SITE_URL` matches your actual live site address.
+10. **Grant email permission (one time only):** in the toolbar, use the function dropdown (next to the Debug button) to select `testEmailPermission`, then click **Run**. Google will show a permission screen — click "Advanced" then "Go to project (unsafe)", then **Allow**. You should get a test email in your own inbox within a minute or two — that confirms it's working. You only need to do this once, ever.
+11. Click **Deploy > New deployment**.
+12. Click the gear icon next to "Select type" and choose **Web app**.
+13. Set **Execute as** to `Me`, and **Who has access** to `Anyone`. Click **Deploy**.
+14. Authorize it with your Google account when prompted (same "Advanced" > "Go to project (unsafe)" step as above — this is expected for personal scripts).
+15. Copy the **Web app URL** it gives you.
+16. In `assets/config.js`, paste that URL as the value of `ORDERS_ENDPOINT_URL`. Commit changes.
 
 Now every order request submitted on the site appears as a new row in your
 Orders sheet, ready to cross-reference against your Client Cheat Sheet the
@@ -85,6 +108,39 @@ way you already do for production sheets — and the client who submitted it
 gets an automatic confirmation email summarizing what they ordered — and
 you get a notification email too, sent automatically to whichever Google
 account you used to set this up.
+
+You'll also get a text message on your phone via your carrier's free
+email-to-SMS gateway. This uses `CHEF_TEXT_GATEWAY` near the top of
+`Code.gs` (currently set to your number @ T-Mobile's gateway). **If you
+switch carriers, just update that one line** — the comment above it lists
+the gateway domains for Verizon, AT&T, and T-Mobile. To test it on its
+own, run the `testTextNotification` function from the Apps Script editor
+the same way you'd run `testEmailPermission`.
+
+**On the Client Profiles system:** every order automatically recognizes
+returning clients (matched privately by email via the Client Contacts
+tab) and updates their row in the separate Client Profiles sheet — new
+allergies or preferences are **added** to what's already there, nothing
+is ever automatically removed or overwritten, and staff never see a
+single email address or phone number anywhere in that file. The
+"Standing Notes" column is yours alone to maintain by hand (it's not
+touched by any order) — that's where your imported cheat-sheet notes
+live, kept separate from the transient, per-order notes that stay in
+the Orders tab. To confirm this is set up correctly before relying on
+it, run `testClientProfileUpdate` **twice in a row** from the Apps
+Script editor — the second run should update the same "Test Client"
+row in both sheets rather than creating duplicates.
+
+**On the Order History page:** clients can view their own past orders
+at `history.html` without any account or password. They enter their
+email, get a one-time link by email (valid 24 hours), and clicking it
+shows every order tied to that email, grouped and formatted the same
+way as their confirmation emails. Nobody can see another client's
+history just by guessing an email — only someone with access to that
+inbox can ever open the link. To test the whole flow without waiting
+on email, run `testHistoryFlow` from the Apps Script editor — it logs
+a link and the order data it would show, so you can confirm both
+pieces work before a client tries it for real.
 
 ---
 
@@ -122,6 +178,6 @@ mentioning to clients once the site is live.
 
 ## Notes
 
-- **No payment or billing** happens anywhere in this app, by design. The order form is a request only; the confirmation message tells clients you'll follow up separately.
+- **No payment or billing** happens anywhere in this app, by design. The order form is a request only; clients are told payment is collected at time of delivery, without setting an expectation of a follow-up call for straightforward orders.
 - **Allergies vs. preferences** are separate fields on the order form so allergy flags stand out clearly for the kitchen (matches the red-alert convention on your production sheets).
 - If you ever want item photos, pricing display (still no checkout), or a login-based client history, those are natural next additions to `index.html` / `assets/app.js` — the structure is built to extend.
