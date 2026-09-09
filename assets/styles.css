@@ -493,7 +493,7 @@ fieldset {
 .footer-icon-link {
   display: inline-flex;
   align-items: center;
-  line-height: 0;
+  gap: 6px;
 }
 
 .footer-icon-link:hover { color: var(--gold-tint); }
