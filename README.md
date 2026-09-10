@@ -81,26 +81,32 @@ The website reads the sheet live — no redeploy needed.
 
    Also private, also never shared. This one powers the "Order History" page on the site — when a client asks to see their past orders, this tab stores a one-time link tied to their email for 24 hours.
 
-5. Now create a **completely separate, second Google Sheet file** — a new file, not another tab. Name it something like "Empowered Foodie — Client Profiles." Add one tab named exactly **Client Profiles**, with row 1 as:
+5. Add a **fourth tab**, also in the same sheet, named exactly **Questionnaire Responses**. In row 1, add:
+
+   `Timestamp | Name | Email | Cuisine | Spice Level | Likes | Dislikes | Allergies`
+
+   Also private, never shared. This is where a first-time client's questionnaire answers land.
+
+6. Now create a **completely separate, second Google Sheet file** — a new file, not another tab. Name it something like "Empowered Foodie — Client Profiles." Add one tab named exactly **Client Profiles**, with row 1 as:
 
    `Name | Allergies | Preferences | Standing Notes | Last Updated`
 
    No email or phone column exists here at all. **This is the file you share with your team** — click **Share** (top right) and add each team member's Google account. Because it's a separate file from Orders/Client Contacts, sharing it can never expose anything beyond what's in this one tab.
 
-6. Copy this new sheet's ID from its URL — it's the long string between `/d/` and `/edit`:
+7. Copy this new sheet's ID from its URL — it's the long string between `/d/` and `/edit`:
 
    `docs.google.com/spreadsheets/d/`**`THIS_PART`**`/edit`
 
-7. Back in your **Orders** sheet, go to **Extensions > Apps Script**.
-8. Delete any starter code in the editor, then paste in the contents of `apps-script/Code.gs` from this project.
-9. Near the top of the file, find `CLIENT_PROFILES_SPREADSHEET_ID` and paste in the ID you copied in step 6. While you're there, double-check `SITE_URL` matches your actual live site address.
-10. **Grant email permission (one time only):** in the toolbar, use the function dropdown (next to the Debug button) to select `testEmailPermission`, then click **Run**. Google will show a permission screen — click "Advanced" then "Go to project (unsafe)", then **Allow**. You should get a test email in your own inbox within a minute or two — that confirms it's working. You only need to do this once, ever.
-11. Click **Deploy > New deployment**.
-12. Click the gear icon next to "Select type" and choose **Web app**.
-13. Set **Execute as** to `Me`, and **Who has access** to `Anyone`. Click **Deploy**.
-14. Authorize it with your Google account when prompted (same "Advanced" > "Go to project (unsafe)" step as above — this is expected for personal scripts).
-15. Copy the **Web app URL** it gives you.
-16. In `assets/config.js`, paste that URL as the value of `ORDERS_ENDPOINT_URL`. Commit changes.
+8. Back in your **Orders** sheet, go to **Extensions > Apps Script**.
+9. Delete any starter code in the editor, then paste in the contents of `apps-script/Code.gs` from this project.
+10. Near the top of the file, find `CLIENT_PROFILES_SPREADSHEET_ID` and paste in the ID you copied in step 7. While you're there, double-check `SITE_URL` matches your actual live site address.
+11. **Grant email permission (one time only):** in the toolbar, use the function dropdown (next to the Debug button) to select `testEmailPermission`, then click **Run**. Google will show a permission screen — click "Advanced" then "Go to project (unsafe)", then **Allow**. You should get a test email in your own inbox within a minute or two — that confirms it's working. You only need to do this once, ever.
+12. Click **Deploy > New deployment**.
+13. Click the gear icon next to "Select type" and choose **Web app**.
+14. Set **Execute as** to `Me`, and **Who has access** to `Anyone`. Click **Deploy**.
+15. Authorize it with your Google account when prompted (same "Advanced" > "Go to project (unsafe)" step as above — this is expected for personal scripts).
+16. Copy the **Web app URL** it gives you.
+17. In `assets/config.js`, paste that URL as the value of `ORDERS_ENDPOINT_URL`. Commit changes.
 
 Now every order request submitted on the site appears as a new row in your
 Orders sheet, ready to cross-reference against your Client Cheat Sheet the
@@ -142,6 +148,41 @@ on email, run `testHistoryFlow` from the Apps Script editor — it logs
 a link and the order data it would show, so you can confirm both
 pieces work before a client tries it for real.
 
+**Reheat instructions in confirmation emails:** every client confirmation
+email automatically includes reheat instructions for whichever ordered
+dishes match something in `assets/reheat-instructions.csv` — fetched
+fresh from your live site each time, so it always reflects your current
+reheat library with no extra setup needed. Matching is loose
+(case-insensitive, either name containing the other) since your menu
+and reheat library aren't always worded identically. Dishes with no
+match are simply left out of that section — not every item needs an
+entry. To test this without placing a real order, run
+`testReheatMatching` from the Apps Script editor — it sends a
+confirmation email to your own inbox using real dish names from the
+reheat library, so you can see exactly what gets matched.
+
+**First-time questionnaire:** clients who click "Order" land on
+`start-order.html` first, not directly on the order form. They enter
+their email; the site quietly checks it against Client Contacts. A
+known email skips straight to the order page. A new email sees a
+short questionnaire (favorite cuisine, spice level, likes, dislikes,
+allergies) — submitting it saves the answers to the private
+"Questionnaire Responses" tab and immediately creates their Client
+Contacts entry, so they won't be asked again even if they don't finish
+an order in that same visit. To test this without using the website,
+run `testQuestionnaireFlow` from the Apps Script editor — it checks a
+made-up test email, submits a sample questionnaire for it, then checks
+again to confirm the email is now recognized.
+
+The questionnaire questions themselves are plain HTML in
+`start-order.html` — to change them, edit the `<div id="questionnaire-section">`
+block, keeping each question's `id` attribute matching what
+`assets/start-order.js` reads (`q-name`, `q-cuisine`, `q-spice`,
+`q-likes`, `q-dislikes`, `q-allergies`). If you add or remove a
+question entirely, update both the HTML and the `fields` object in
+`start-order.js`'s `submitQuestionnaire` function, plus the
+Questionnaire Responses tab's header row to match.
+
 ---
 
 ## 4. Logo
@@ -173,6 +214,30 @@ it to their phone's home screen as a real-looking app icon:
 Either way, the result is the same: a branded icon that opens full-screen,
 no browser address bar, indistinguishable from a "real" app. Worth
 mentioning to clients once the site is live.
+
+---
+
+---
+
+## 6. Reheat Instructions page
+
+Unlike the menu, this page does **not** read from a Google Sheet — it reads
+a small CSV file (`assets/reheat-instructions.csv`) that lives directly in
+this repo, since these instructions come from a Word doc you write
+yourself rather than a spreadsheet you maintain live.
+
+**Your ongoing workflow:**
+1. Write your reheat instructions the way you always have, in Word.
+2. Send that doc over in your chat with Claude.
+3. Claude regenerates `assets/reheat-instructions.csv` from it and sends
+   it back to you.
+4. Upload just that one file to GitHub (overwrite the existing one),
+   commit — done. Nothing else on the page needs to change.
+
+The CSV has three columns: `Category`, `Dish`, `Instructions`. The page
+groups dishes by category and includes a live search box (only appears
+once there's more than a couple of dishes) so clients can quickly find
+reheating steps for whatever they're eating that night.
 
 ---
 
