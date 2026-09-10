@@ -183,6 +183,13 @@ question entirely, update both the HTML and the `fields` object in
 `start-order.js`'s `submitQuestionnaire` function, plus the
 Questionnaire Responses tab's header row to match.
 
+Questionnaire answers also feed into the staff-facing Client Profiles
+sheet automatically: allergies merge in the same way a real order's
+allergies would, favorite cuisine and spice level become informal
+preferences, and likes/dislikes seed the Standing Notes field — but
+only if that field is currently blank, so it never overwrites anything
+you've written there by hand.
+
 ---
 
 ## 4. Logo
