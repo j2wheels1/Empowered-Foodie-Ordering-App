@@ -1,10 +1,114 @@
- ￼
-Infused with Love by Empowered Foodie
-Order My Foodie Profile Order History Reheat Instructions
-Let's Get Started
-Enter your email to begin your order.
-Email
-Continue
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Start Your Order — Empowered Foodie</title>
+<meta name="description" content="Start an order with Empowered Foodie.">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="assets/favicon-64.png">
+<link rel="apple-touch-icon" href="assets/favicon-180.png">
 
-© Empowered Foodie chefcass@empoweredfoodie.com Find us on Instagram
-Infused with Love by Empowered Foodie
+<link rel="manifest" href="assets/manifest.json">
+<meta name="theme-color" content="#0d2e4b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Emp. Foodie">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <img class="logo" src="assets/logo.png" alt="Empowered Foodie">
+    <p class="brand-tagline">Infused with Love by Empowered Foodie</p>
+    <nav>
+      <a href="start-order.html">Order</a>
+      <a href="profile.html">My Foodie Profile</a>
+      <a href="history.html">Order History</a>
+      <a href="reheats.html">Reheat Instructions</a>
+    </nav>
+  </div>
+</header>
+
+<section class="block">
+  <div class="wrap">
+
+    <div id="email-gate">
+      <h2>Let's Get Started</h2>
+      <p class="block-sub">Enter your email to begin your order.</p>
+      <div class="form-group">
+        <label for="gate-email">Email</label>
+        <input type="email" id="gate-email" placeholder="you@example.com" required>
+      </div>
+      <button id="gate-continue-btn" class="btn btn-primary" type="button">Continue</button>
+      <div id="gate-status" role="status"></div>
+    </div>
+
+    <div id="questionnaire-section" style="display:none;">
+      <h2>Welcome! A Few Questions First</h2>
+      <p class="block-sub">Since this is your first order with us, tell us a bit about your food preferences — this only takes a minute, and we'll only ask once.</p>
+
+      <form id="questionnaire-form">
+        <div class="form-group">
+          <label for="q-name">Full Name</label>
+          <input type="text" id="q-name" required>
+        </div>
+
+        <div class="form-group">
+          <label for="q-cuisine">Favorite Cuisine</label>
+          <input type="text" id="q-cuisine" placeholder="e.g. Italian, Mexican, Thai">
+        </div>
+
+        <div class="form-group">
+          <label for="q-spice">Spice Level</label>
+          <select id="q-spice">
+            <option value="Mild">Mild</option>
+            <option value="Medium">Medium</option>
+            <option value="Spicy">Spicy</option>
+            <option value="Very Spicy">Very Spicy</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="q-likes">Foods You Love</label>
+          <textarea id="q-likes" placeholder="Any favorite ingredients or dishes?"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="q-dislikes">Foods You Dislike</label>
+          <textarea id="q-dislikes" placeholder="Anything you'd rather we leave out?"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="q-allergies">Allergies</label>
+          <textarea id="q-allergies" placeholder="Any allergies we should know about?"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Continue to Order</button>
+        <div id="questionnaire-status" role="status"></div>
+      </form>
+    </div>
+
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>&copy; <span id="year"></span> Empowered Foodie</span>
+    <a href="mailto:chefcass@empoweredfoodie.com" id="footer-email">chefcass@empoweredfoodie.com</a>
+    <a href="https://www.instagram.com/empowered_foodie" target="_blank" rel="noopener noreferrer" class="footer-icon-link">
+      Find us on Instagram
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+    </a>
+    <div class="footer-tagline">Infused with Love by Empowered Foodie</div>
+  </div>
+</footer>
+
+<script src="assets/config.js"></script>
+<script src="assets/start-order.js"></script>
+</body>
+</html>
