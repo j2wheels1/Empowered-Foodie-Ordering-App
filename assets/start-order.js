@@ -17,11 +17,14 @@
     link.href = "mailto:" + cfg.CONTACT_EMAIL;
   }
 
-  const ORDER_PAGE = "index.html#order";
+  const ORDER_PAGE = "index.html";
   let pendingEmail = "";
 
   function goToOrderPage() {
-    window.location.href = ORDER_PAGE;
+    const params = new URLSearchParams();
+    if (pendingEmail) params.set("email", pendingEmail);
+    const query = params.toString();
+    window.location.href = ORDER_PAGE + (query ? "?" + query : "") + "#order";
   }
 
   function checkClient() {
@@ -125,11 +128,4 @@
 
     setTimeout(() => {
       statusEl.className = "success";
-      statusEl.textContent = "Thanks! Taking you to the order page…";
-      setTimeout(goToOrderPage, 700);
-    }, 800);
-  }
-
-  document.getElementById("gate-continue-btn").addEventListener("click", checkClient);
-  document.getElementById("questionnaire-form").addEventListener("submit", submitQuestionnaire);
-})();
+      statusEl.textContent = "Thanks! Taking you
