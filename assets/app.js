@@ -6,6 +6,23 @@
    No payment or billing logic lives anywhere in this file. */
 
 (function () {
+  // Require arriving via the start-order.html gate: if there's no
+  // ?email=... in the URL, this page was reached directly (a
+  // bookmark, a saved link, or just typing the URL) rather than
+  // through the intended flow, so send them to the gate instead of
+  // letting them skip straight to ordering. Note: this checks that an
+  // email was PASSED ALONG by the gate, not that it's necessarily a
+  // verified/known one — closing that fully would need a slower
+  // server round-trip on every page load, which risks bouncing a
+  // brand-new client back right after they've just finished the
+  // questionnaire. This closes the common case (direct navigation)
+  // without that trade-off.
+  const urlEmail = new URLSearchParams(window.location.search).get("email");
+  if (!urlEmail) {
+    window.location.href = "start-order.html";
+    return;
+  }
+
   const cfg = window.EF_CONFIG || {};
 
   document.getElementById("year").textContent = new Date().getFullYear();
