@@ -128,4 +128,11 @@
 
     setTimeout(() => {
       statusEl.className = "success";
-      statusEl.textContent = "Thanks! Taking you
+      statusEl.textContent = "Thanks! Taking you to the order page…";
+      setTimeout(goToOrderPage, 700);
+    }, 800);
+  }
+
+  document.getElementById("gate-continue-btn").addEventListener("click", checkClient);
+  document.getElementById("questionnaire-form").addEventListener("submit", submitQuestionnaire);
+})();
