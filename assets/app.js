@@ -293,6 +293,16 @@
     document.body.removeChild(tempForm);
   }
 
+  // Pre-fills the email field if it arrived via ?email=... in the URL
+  // (set by start-order.html after checking/collecting it there), so
+  // clients don't have to type their email twice.
+  function prefillEmailFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    const email = params.get("email");
+    if (email) document.getElementById("f-email").value = email;
+  }
+
   document.getElementById("order-form").addEventListener("submit", handleSubmit);
+  prefillEmailFromUrl();
   loadMenu();
 })();
