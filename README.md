@@ -174,6 +174,28 @@ run `testQuestionnaireFlow` from the Apps Script editor — it checks a
 made-up test email, submits a sample questionnaire for it, then checks
 again to confirm the email is now recognized.
 
+Questionnaire answers also feed into the staff-facing Client Profiles
+sheet automatically: allergies merge in the same way a real order's
+allergies would, favorite cuisine and spice level become informal
+preferences, and likes/dislikes seed the Standing Notes field — but
+only if that field is currently blank, so it never overwrites anything
+you've written there by hand.
+
+**My Foodie Profile page:** clients can revisit `profile.html` anytime
+(not just their first order) to view or update their questionnaire
+answers. They enter their email, the page loads whatever's already on
+file (or shows a blank form if they've never filled it out), and
+saving reuses the exact same backend logic as the first-time
+questionnaire — so it updates Client Contacts and Client Profiles the
+same way every time. Each save also adds a new row to Questionnaire
+Responses, so that tab doubles as a history of how someone's answers
+changed over time, if that's ever useful to look back on.
+
+**Email carries over automatically:** whichever email a client enters
+on the start-order gate page gets passed along to the order form via
+the URL (`index.html?email=...#order`), so they never have to type it
+twice in the same visit.
+
 The questionnaire questions themselves are plain HTML in
 `start-order.html` — to change them, edit the `<div id="questionnaire-section">`
 block, keeping each question's `id` attribute matching what
@@ -181,14 +203,9 @@ block, keeping each question's `id` attribute matching what
 `q-likes`, `q-dislikes`, `q-allergies`). If you add or remove a
 question entirely, update both the HTML and the `fields` object in
 `start-order.js`'s `submitQuestionnaire` function, plus the
-Questionnaire Responses tab's header row to match.
-
-Questionnaire answers also feed into the staff-facing Client Profiles
-sheet automatically: allergies merge in the same way a real order's
-allergies would, favorite cuisine and spice level become informal
-preferences, and likes/dislikes seed the Standing Notes field — but
-only if that field is currently blank, so it never overwrites anything
-you've written there by hand.
+Questionnaire Responses tab's header row to match. The same questions
+appear on `profile.html` with `p-` prefixed ids instead of `q-` — keep
+both pages' fields in sync if you change one.
 
 ---
 
