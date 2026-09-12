@@ -310,16 +310,23 @@
     document.body.removeChild(tempForm);
   }
 
-  // Pre-fills the email field if it arrived via ?email=... in the URL
-  // (set by start-order.html after checking/collecting it there), so
-  // clients don't have to type their email twice.
-  function prefillEmailFromUrl() {
+  // Pre-fills name, email, and phone if they arrived via the URL (set
+  // by start-order.html after checking/collecting them there), so a
+  // returning client only ever has to type their email once — the
+  // rest of the order form fills itself in from what's already on
+  // file. A brand-new client still needs to type name and phone once
+  // during their first real order, since we don't have those yet.
+  function prefillFromUrl() {
     const params = new URLSearchParams(window.location.search);
     const email = params.get("email");
+    const name = params.get("name");
+    const phone = params.get("phone");
     if (email) document.getElementById("f-email").value = email;
+    if (name) document.getElementById("f-name").value = name;
+    if (phone) document.getElementById("f-phone").value = phone;
   }
 
   document.getElementById("order-form").addEventListener("submit", handleSubmit);
-  prefillEmailFromUrl();
+  prefillFromUrl();
   loadMenu();
 })();
