@@ -19,10 +19,14 @@
 
   const ORDER_PAGE = "index.html";
   let pendingEmail = "";
+  let pendingName = "";
+  let pendingPhone = "";
 
   function goToOrderPage() {
     const params = new URLSearchParams();
     if (pendingEmail) params.set("email", pendingEmail);
+    if (pendingName) params.set("name", pendingName);
+    if (pendingPhone) params.set("phone", pendingPhone);
     const query = params.toString();
     window.location.href = ORDER_PAGE + (query ? "?" + query : "") + "#order";
   }
@@ -55,6 +59,11 @@
       .then((res) => res.json())
       .then((data) => {
         if (data.exists) {
+          // Carry over their stored name/phone too, so a returning
+          // client only ever has to type their email here — the rest
+          // of the order form fills itself in.
+          pendingName = data.name || "";
+          pendingPhone = data.phone || "";
           statusEl.className = "success";
           statusEl.textContent = "Welcome back! Taking you to the order page…";
           setTimeout(goToOrderPage, 700);
@@ -81,6 +90,10 @@
       statusEl.textContent = "Please add your name.";
       return;
     }
+
+    // They've just typed their name here — carry it over to the order
+    // form too, same as email, so it's not asked for twice in one visit.
+    pendingName = name;
 
     const fields = {
       action: "submitQuestionnaire",
