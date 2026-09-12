@@ -78,9 +78,18 @@
   // per-person serving).
   const NO_SERVINGS_CATEGORIES = ["breakfast", "baked goods", "dip", "soup"];
 
-  function categoryNeedsServings(category) {
-    const lower = category.toLowerCase();
-    return !NO_SERVINGS_CATEGORIES.some((kw) => lower.includes(kw));
+  // Specific items that need a servings count even though their
+  // category normally doesn't — e.g. Overnight Oats is ordered by the
+  // serving despite living in Breakfast & Baked Goods, which is
+  // otherwise a no-servings category. Matched case-insensitively
+  // against the item name.
+  const ITEM_SERVINGS_OVERRIDES = ["overnight oats"];
+
+  function itemNeedsServings(category, itemName) {
+    const lowerItem = itemName.toLowerCase();
+    if (ITEM_SERVINGS_OVERRIDES.some((name) => lowerItem.includes(name))) return true;
+    const lowerCat = category.toLowerCase();
+    return !NO_SERVINGS_CATEGORIES.some((kw) => lowerCat.includes(kw));
   }
 
   // Short note on how a category is sold, shown next to its heading.
@@ -103,13 +112,13 @@
 
     const byCat = groupByCategory(items);
     Object.keys(byCat).forEach((cat) => {
-      const needsServings = categoryNeedsServings(cat);
       const orderNote = categoryOrderNote(cat);
       const catEl = document.createElement("div");
       catEl.className = "item-picker-category";
       catEl.innerHTML = `<h4>${escapeHtml(cat)}${orderNote ? ` <span class="category-note">${escapeHtml(orderNote)}</span>` : ""}</h4>`;
 
       byCat[cat].forEach((item, idx) => {
+        const needsServings = itemNeedsServings(cat, item.item);
         const checkId = `chk-${cat}-${idx}`.replace(/\s+/g, "-");
         const servingsId = `srv-${cat}-${idx}`.replace(/\s+/g, "-");
         const row = document.createElement("div");
