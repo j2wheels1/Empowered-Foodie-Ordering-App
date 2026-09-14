@@ -369,6 +369,27 @@ function checkClientExists(email) {
   return false;
 }
 
+// Looks up a returning client's stored Name and Phone from Client
+// Contacts, alongside whether they exist at all. Used by the
+// start-order gate so a returning client's name and phone can be
+// carried over to the order form too, not just their email — they
+// only ever have to type those once. Returns exists:false with blank
+// name/phone if there's no match (or the tab isn't set up yet).
+function getContactInfo(email) {
+  if (!email) return { exists: false, name: "", phone: "" };
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(CLIENT_CONTACTS_SHEET_NAME);
+  if (!sheet) return { exists: false, name: "", phone: "" };
+
+  const data = sheet.getDataRange().getValues();
+  const target = email.trim().toLowerCase();
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][1]).trim().toLowerCase() === target) {
+      return { exists: true, name: data[i][0] || "", phone: data[i][2] || "" };
+    }
+  }
+  return { exists: false, name: "", phone: "" };
+}
+
 // Returns this client's MOST RECENT questionnaire answers (Questionnaire
 // Responses is append-only — every submission adds a new row — so this
 // scans all matches and keeps the last one, since rows are appended in
@@ -1165,7 +1186,7 @@ function doGet(e) {
 
   if (p.action === "checkClient") {
     return ContentService
-      .createTextOutput(JSON.stringify({ exists: checkClientExists(p.email || "") }))
+      .createTextOutput(JSON.stringify(getContactInfo(p.email || "")))
       .setMimeType(ContentService.MimeType.JSON);
   }
 
