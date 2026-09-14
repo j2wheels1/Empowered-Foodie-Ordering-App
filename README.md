@@ -60,6 +60,17 @@ file" button works entirely in the browser, and so does editing files later
 **Your weekly update from now on:** open this Sheet, edit the rows, done.
 The website reads the sheet live — no redeploy needed.
 
+**Servings vs. sold-by-the-batch:** any category containing "breakfast,"
+"baked goods," "dip," or "soup" in its name shows a plain checkbox on
+the order form (no servings field) — matching how those items are
+actually sold. Everything else gets a servings count. A small,
+hardcoded exception list in `assets/app.js`
+(`ITEM_SERVINGS_OVERRIDES`) lets specific *items* opt out of their
+category's default — currently just `"overnight oats"`, which needs a
+servings count despite living in Breakfast & Baked Goods. To add
+another exception like this, add the item's name (lowercase, a
+distinctive substring is enough) to that array.
+
 ---
 
 ## 3. Set up order requests (Google Apps Script)
@@ -196,6 +207,31 @@ on the start-order gate page gets passed along to the order form via
 the URL (`index.html?email=...#order`), so they never have to type it
 twice in the same visit.
 
+**Name and phone carry over too, for returning clients:** when the
+gate recognizes a returning client's email, it also looks up their
+stored name and phone from Client Contacts and passes those along the
+same way (`index.html?email=...&name=...&phone=...#order`) — so after
+their first order, a client only ever has to type their email at the
+gate, and the rest of the order form fills itself in. A brand-new
+client still types their name once on the questionnaire (which also
+carries over) and their phone once on their first real order, since
+that's the only place phone numbers are ever collected — from then on,
+it's remembered too.
+
+**The order page can't be skipped to directly:** `index.html` checks
+for that `?email=...` in its URL as soon as it loads, and redirects to
+`start-order.html` if it's missing — so a bookmarked or saved link to
+the order page straight can't be used to bypass the gate (and the
+questionnaire, for a first-time client). This checks that an email was
+passed along by the gate, not that it's necessarily a real, verified
+one — fully closing that would need a slower check against Client
+Contacts on every single page load, which risks bouncing a brand-new
+client back right after they've just finished the questionnaire, due
+to a timing gap between saving their answers and that check running.
+Given the low stakes here (this isn't protecting private data, just
+encouraging the intended flow), that trade-off favors reliability for
+genuine first-time clients over closing a determined workaround.
+
 The questionnaire questions themselves are plain HTML in
 `start-order.html` — to change them, edit the `<div id="questionnaire-section">`
 block, keeping each question's `id` attribute matching what
@@ -243,25 +279,46 @@ mentioning to clients once the site is live.
 
 ---
 
-## 6. Reheat Instructions page
+## 6. Reheat Instructions pages (This Week / Next Week)
 
-Unlike the menu, this page does **not** read from a Google Sheet — it reads
-a small CSV file (`assets/reheat-instructions.csv`) that lives directly in
-this repo, since these instructions come from a Word doc you write
-yourself rather than a spreadsheet you maintain live.
+There are **two** reheat pages — `reheats.html` (This Week) and
+`reheats-next-week.html` (Next Week) — so clients can see current
+instructions and get a preview of what's coming. Like the menu, these
+do **not** read from a Google Sheet — each reads its own small CSV
+file that lives directly in this repo, since these instructions come
+from a Word doc you write yourself rather than a spreadsheet you
+maintain live:
 
-**Your ongoing workflow:**
+- **This Week** → `assets/reheat-instructions.csv`
+- **Next Week** → `assets/reheat-instructions-next-week.csv`
+
+Both pages share the same script (`assets/reheats.js`) — the only
+difference is one line near the bottom of each HTML file:
+
+```html
+<script>window.REHEAT_CSV_PATH = "assets/reheat-instructions.csv";</script>
+```
+
+(swap the filename for the next-week page). If you ever want a third
+page — say, for a holiday menu — copy `reheats.html`, give it a new
+filename, and change that one line to point at a new CSV.
+
+**Your ongoing workflow, for either week:**
 1. Write your reheat instructions the way you always have, in Word.
-2. Send that doc over in your chat with Claude.
-3. Claude regenerates `assets/reheat-instructions.csv` from it and sends
-   it back to you.
+2. Send that doc over in your chat with Claude, and say which week
+   it's for.
+3. Claude regenerates the matching CSV file from it and sends it back
+   to you.
 4. Upload just that one file to GitHub (overwrite the existing one),
-   commit — done. Nothing else on the page needs to change.
+   commit — done. Nothing else on either page needs to change.
 
-The CSV has three columns: `Category`, `Dish`, `Instructions`. The page
-groups dishes by category and includes a live search box (only appears
-once there's more than a couple of dishes) so clients can quickly find
-reheating steps for whatever they're eating that night.
+Each CSV has three columns: `Category`, `Dish`, `Instructions`. Each
+page groups dishes by category and includes a live search box (only
+appears once there's more than a couple of dishes) so clients can
+quickly find reheating steps for whatever they're eating that night.
+An empty CSV (just the header row) shows a friendly "check back soon"
+message rather than an empty-looking page — that's the starting state
+for Next Week until you have real content for it.
 
 ---
 

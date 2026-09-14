@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Reheat Instructions — Empowered Foodie</title>
+<title>This Week's Reheat Instructions — Empowered Foodie</title>
 <meta name="description" content="How to reheat this week's Empowered Foodie dishes.">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="64x64" href="assets/favicon-64.png">
@@ -29,14 +29,15 @@
       <a href="start-order.html">Order</a>
       <a href="profile.html">My Foodie Profile</a>
       <a href="history.html">Order History</a>
-      <a href="reheats.html">Reheat Instructions</a>
+      <a href="reheats.html" id="nav-this-week">This Week's Reheats</a>
+      <a href="reheats-next-week.html" id="nav-next-week">Next Week's Reheats</a>
     </nav>
   </div>
 </header>
 
 <section class="block">
   <div class="wrap">
-    <h2>Reheat Instructions</h2>
+    <h2>This Week's Reheat Instructions</h2>
     <p class="block-sub">How to warm up this week's dishes so they taste just as good as day one.</p>
 
     <div id="reheats-search-wrap" class="form-group" style="display:none;">
@@ -62,6 +63,9 @@
   </div>
 </footer>
 
+<script>window.REHEAT_CSV_PATH = "assets/reheat-instructions.csv";</script>
+<script src="assets/config.js"></script>
+<script src="assets/nav-dates.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script src="assets/reheats.js"></script>
 </body>
