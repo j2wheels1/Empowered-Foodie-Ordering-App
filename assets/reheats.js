@@ -1,11 +1,16 @@
-/* Empowered Foodie — reheat instructions page
-   Reads assets/reheat-instructions.csv directly (a file in this repo,
-   NOT a Google Sheet) and renders it grouped by category with a live
-   search box. Updated by regenerating that one CSV file whenever a new
-   Word doc of reheat instructions comes in — nothing else on this page
-   needs to change. */
+/* Empowered Foodie — reheat instructions page (shared by both
+   reheats.html and reheats-next-week.html)
+   Reads a CSV file directly from this repo (NOT a Google Sheet) and
+   renders it grouped by category with a live search box. Which CSV
+   file to read comes from window.REHEAT_CSV_PATH, set by a small
+   inline <script> in each page before this file loads — that's the
+   only difference between the two pages. Updated by regenerating the
+   relevant CSV file whenever a new Word doc of reheat instructions
+   comes in — nothing else needs to change. */
 
 (function () {
+  const CSV_PATH = window.REHEAT_CSV_PATH || "assets/reheat-instructions.csv";
+
   document.getElementById("year").textContent = new Date().getFullYear();
 
   function escapeHtml(str) {
@@ -92,7 +97,7 @@
 
   function loadReheats() {
     const results = document.getElementById("reheats-results");
-    Papa.parse("assets/reheat-instructions.csv", {
+    Papa.parse(CSV_PATH, {
       download: true,
       header: true,
       skipEmptyLines: true,

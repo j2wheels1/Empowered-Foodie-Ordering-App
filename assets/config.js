@@ -19,5 +19,14 @@ window.EF_CONFIG = {
   // Business info shown in the footer / confirmation message.
   BUSINESS_NAME: "Empowered Foodie",
   CONTACT_EMAIL: "chefcass@empoweredfoodie.com",
-  TAGLINE: "Infused with Love by Empowered Foodie"
+  TAGLINE: "Infused with Love by Empowered Foodie",
+
+  // 3) REHEAT PAGE DATES
+  // Shown next to "This Week's Reheats" / "Next Week's Reheats" in the
+  // nav bar on every page, so clients know exactly which dates each
+  // page covers. Update these two lines each week — nothing else
+  // needs to change anywhere on the site. Leave blank ("") to show
+  // just the plain label with no dates.
+  THIS_WEEK_DATES: "Sept 22–26",
+  NEXT_WEEK_DATES: "Sept 29–Oct 3"
 };

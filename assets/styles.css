@@ -133,6 +133,8 @@ a { color: var(--navy); }
 
 .hero .cta-row { display: flex; gap: 14px; flex-wrap: wrap; }
 
+.button-row { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; margin-top: 4px; }
+
 .btn {
   display: inline-block;
   font-family: var(--font-body);
