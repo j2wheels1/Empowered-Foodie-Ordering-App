@@ -27,6 +27,6 @@ window.EF_CONFIG = {
   // page covers. Update these two lines each week — nothing else
   // needs to change anywhere on the site. Leave blank ("") to show
   // just the plain label with no dates.
-  FOR_WEEK_OF: "Sept 20–26",
+  REHEATS_FOR_SEPT. 20-26: "Sept 20–26",
   NEXT_WEEK_DATES: "Sept 29–Oct 3"
 };
