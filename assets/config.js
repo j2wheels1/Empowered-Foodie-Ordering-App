@@ -24,9 +24,9 @@ window.EF_CONFIG = {
   // 3) REHEAT PAGE DATES
   // Shown next to "This Week's Reheats" / "Next Week's Reheats" in the
   // nav bar on every page, so clients know exactly which dates each
-  // page covers. Update these two lines each week — nothing else
-  // needs to change anywhere on the site. Leave blank ("") to show
+  // page covers. Update just the text in quotes below each week —
+  // never change the part before the colon. Leave blank ("") to show
   // just the plain label with no dates.
-  REHEATS_FOR_SEPT. 20-26: "Sept 20–26",
+  THIS_WEEK_DATES: "Sept 20–26",
   NEXT_WEEK_DATES: "Sept 29–Oct 3"
 };
