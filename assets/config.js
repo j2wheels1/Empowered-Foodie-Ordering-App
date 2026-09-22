@@ -9,7 +9,7 @@ window.EF_CONFIG = {
   // Publish your weekly menu Google Sheet to the web as a CSV, then
   // paste that URL here. Editing the sheet updates the live site —
   // no code changes, no redeploy.
-  MENU_CSV_URL: "https://docs.google.com/forms/d/1luwP2h2jUzjplF32wrhVdVUn1Hm0V-V80BnOM8n49Sc/edit",
+  MENU_CSV_URL: "https://docs.google.com/spreadsheets/d/e/2PACX-1vTmQ_G0c-kuR9Nlao6O0A0Aoxh1TE-gYm9epff2zfifoGCA32o2JPz_Gis72RcdzYYLV9ZHucHs-YCV/pub?gid=1237882292&single=true&output=csv",
 
   // 2) ORDER SUBMISSIONS
   // Paste the Web App URL you get after deploying the Apps Script in
