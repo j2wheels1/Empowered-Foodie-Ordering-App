@@ -2,11 +2,13 @@
    1. Client enters email.
    2. We check it against Client Contacts (read-only GET, same pattern
       as Order History's lookup).
-   3. Known email -> straight to the order page.
+   3. Known email -> straight to the order page, carrying their stored
+      name, phone, AND menu group (Clean Eats vs. Standard) along.
    4. New email -> show the questionnaire; submitting it saves the
       answers AND creates a Client Contacts entry immediately (so
       they're not asked again even if they don't finish an order right
-      away), then continues to the order page. */
+      away), then continues to the order page on the Standard menu —
+      you can tag them for Clean Eats afterward in Client Contacts. */
 
 (function () {
   const cfg = window.EF_CONFIG || {};
@@ -21,12 +23,14 @@
   let pendingEmail = "";
   let pendingName = "";
   let pendingPhone = "";
+  let pendingMenuGroup = "";
 
   function goToOrderPage() {
     const params = new URLSearchParams();
     if (pendingEmail) params.set("email", pendingEmail);
     if (pendingName) params.set("name", pendingName);
     if (pendingPhone) params.set("phone", pendingPhone);
+    if (pendingMenuGroup) params.set("menu", pendingMenuGroup);
     const query = params.toString();
     window.location.href = ORDER_PAGE + (query ? "?" + query : "") + "#order";
   }
@@ -59,11 +63,13 @@
       .then((res) => res.json())
       .then((data) => {
         if (data.exists) {
-          // Carry over their stored name/phone too, so a returning
-          // client only ever has to type their email here — the rest
-          // of the order form fills itself in.
+          // Carry over their stored name/phone/menu group too, so a
+          // returning client only ever has to type their email here —
+          // the rest of the order form (and the right menu) fills
+          // itself in.
           pendingName = data.name || "";
           pendingPhone = data.phone || "";
+          pendingMenuGroup = data.menuGroup || "";
           statusEl.className = "success";
           statusEl.textContent = "Welcome back! Taking you to the order page…";
           setTimeout(goToOrderPage, 700);
@@ -94,6 +100,9 @@
     // They've just typed their name here — carry it over to the order
     // form too, same as email, so it's not asked for twice in one visit.
     pendingName = name;
+    // Brand-new clients have no Menu Group tag yet — they land on the
+    // Standard menu for this first order. Tag them in Client Contacts
+    // afterward if they should be on Clean Eats going forward.
 
     const fields = {
       action: "submitQuestionnaire",
