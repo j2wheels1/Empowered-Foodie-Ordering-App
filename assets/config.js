@@ -5,11 +5,17 @@
 */
 
 window.EF_CONFIG = {
-  // 1) MENU SOURCE
+  // 1) MENU SOURCE — Standard menu
   // Publish your weekly menu Google Sheet to the web as a CSV, then
   // paste that URL here. Editing the sheet updates the live site —
   // no code changes, no redeploy.
   MENU_CSV_URL: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ61rQdyqy3FV_132soqKWLzL-lJJXEvErcaUIFDsnG8XYQ6PobB3dh56G-y_h9AzJ3Ei6C-z6ic2T9/pub?output=csv",
+
+  // 1b) MENU SOURCE — Clean Eats menu
+  // Same idea, but for the separate Clean Eats menu sheet. Clients
+  // tagged "Clean Eats" in the Client Contacts "Menu Group" column see
+  // this one instead of the Standard menu above.
+  MENU_CSV_URL_CLEAN_EATS: "PASTE_CLEAN_EATS_MENU_CSV_URL_HERE",
 
   // 2) ORDER SUBMISSIONS
   // Paste the Web App URL you get after deploying the Apps Script in
