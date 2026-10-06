@@ -15,7 +15,7 @@ window.EF_CONFIG = {
   // Same idea, but for the separate Clean Eats menu sheet. Clients
   // tagged "Clean Eats" in the Client Contacts "Menu Group" column see
   // this one instead of the Standard menu above.
-  MENU_CSV_URL_CLEAN_EATS: "PASTE_CLEAN_EATS_MENU_CSV_URL_HERE",
+  MENU_CSV_URL_CLEAN_EATS: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRApMTaKgoAhkYZB79BOpbNlX-i7vtMx2uTvHQOeSIw795lqn1kotWXSu5lGHB0Veaegzyx38zCA-iL/pub?output=csv",
 
   // 2) ORDER SUBMISSIONS
   // Paste the Web App URL you get after deploying the Apps Script in
