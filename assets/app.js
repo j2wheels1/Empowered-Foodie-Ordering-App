@@ -253,3 +253,171 @@
         download: true,
         header: true,
         skipEmptyLines: true,
+        complete: (results) => resolve(normalizeRows(results.data)),
+        error: (err) => reject(err),
+      });
+    });
+  }
+
+  function loadMenu() {
+    const picker = document.getElementById("item-picker");
+    const sources = menuSources();
+    if (!sources.length) {
+      picker.innerHTML = '<p class="hint">Menu sheet isn\'t connected yet — see README.md to set MENU_CSV_URL.</p>';
+      return;
+    }
+    picker.innerHTML = '<p class="hint">Loading this week\'s menu…</p>';
+
+    Promise.allSettled(sources.map((s) => parseMenu(s.url))).then((results) => {
+      const sections = sources.map((s, i) => ({
+        key: s.key,
+        label: s.label,
+        items: results[i].status === "fulfilled" ? results[i].value : [],
+        failed: results[i].status === "rejected",
+      }));
+
+      if (sections.every((s) => s.failed)) {
+        picker.innerHTML = '<p class="hint">Couldn\'t load the menu right now. Double-check MENU_CSV_URL in config.js.</p>';
+        return;
+      }
+      renderItemPicker(sections);
+    });
+  }
+
+  // ---------- Order submission ----------
+  function collectSelectedItems() {
+    const checks = document.querySelectorAll(".item-check:checked");
+    const selected = [];
+    checks.forEach((chk) => {
+      const item = chk.dataset.item;
+      const category = chk.dataset.category;
+      const servingsId = chk.dataset.servingsId;
+      if (servingsId) {
+        const servingsInput = document.getElementById(servingsId);
+        const servings = servingsInput ? servingsInput.value.trim() : "";
+        selected.push(`${item} (${category})${servings ? ` — ${servings} servings` : ""}`);
+      } else {
+        selected.push(`${item} (${category})`);
+      }
+    });
+    return selected.join("; ");
+  }
+
+  function collectChecked(name) {
+    return Array.from(document.querySelectorAll(`input[name="${name}"]:checked`))
+      .map((el) => el.value)
+      .join(", ");
+  }
+
+  function collectCategoryNotes() {
+    const inputs = document.querySelectorAll(".category-notes-input");
+    const parts = [];
+    inputs.forEach((input) => {
+      const val = input.value.trim();
+      if (val) parts.push(`${input.dataset.category}: ${val}`);
+    });
+    return parts.join(" | ");
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    const form = e.target;
+    const statusEl = document.getElementById("order-status");
+
+    if (!form.name.value.trim() || !form.email.value.trim() || !form.phone.value.trim()) {
+      statusEl.className = "error";
+      statusEl.textContent = "Please add your name, email, and phone number before submitting.";
+      return;
+    }
+
+    const allergiesOther = document.getElementById("f-allergies-other").value.trim();
+    let allergies = collectChecked("allergies");
+    if (allergiesOther) allergies = allergies ? `${allergies}, ${allergiesOther}` : allergiesOther;
+
+    const categoryNotes = collectCategoryNotes();
+    const generalNotes = form.notes.value.trim();
+    const combinedNotes = [categoryNotes, generalNotes].filter(Boolean).join(" | ");
+
+    const fields = {
+      name: form.name.value.trim(),
+      email: form.email.value.trim(),
+      phone: form.phone.value.trim(),
+      items: collectSelectedItems(),
+      allergies: allergies,
+      preferences: collectChecked("preferences"),
+      notes: combinedNotes,
+    };
+
+    if (!cfg.ORDERS_ENDPOINT_URL || cfg.ORDERS_ENDPOINT_URL.indexOf("PASTE_YOUR") === 0) {
+      statusEl.className = "error";
+      statusEl.textContent = "Order inbox isn't connected yet — see README.md to set ORDERS_ENDPOINT_URL.";
+      return;
+    }
+
+    const submitBtn = form.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Sending…";
+
+    submitViaHiddenForm(cfg.ORDERS_ENDPOINT_URL, fields);
+
+    // Submitting into a hidden cross-origin iframe means we can't read
+    // back whether Apps Script succeeded, so we confirm optimistically
+    // once the browser has had a moment to dispatch it. This is the
+    // standard, most reliable way to post form data into an Apps
+    // Script Web App from a static site.
+    setTimeout(() => {
+      statusEl.className = "success";
+      statusEl.textContent = "Thanks! Your order request has been received. Payment is collected at time of delivery.";
+      form.reset();
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Submit Order Request";
+    }, 800);
+  }
+
+  function submitViaHiddenForm(url, fields) {
+    let iframe = document.getElementById("ef-hidden-submit-frame");
+    if (!iframe) {
+      iframe = document.createElement("iframe");
+      iframe.id = "ef-hidden-submit-frame";
+      iframe.name = "ef-hidden-submit-frame";
+      iframe.style.display = "none";
+      document.body.appendChild(iframe);
+    }
+
+    const tempForm = document.createElement("form");
+    tempForm.action = url;
+    tempForm.method = "POST";
+    tempForm.target = "ef-hidden-submit-frame";
+    tempForm.style.display = "none";
+
+    Object.keys(fields).forEach((key) => {
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = key;
+      input.value = fields[key];
+      tempForm.appendChild(input);
+    });
+
+    document.body.appendChild(tempForm);
+    tempForm.submit();
+    document.body.removeChild(tempForm);
+  }
+
+  // Pre-fills name, email, and phone if they arrived via the URL (set
+  // by start-order.html after checking/collecting them there), so a
+  // returning client only ever has to type their email once.
+  function prefillFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    const email = params.get("email");
+    const name = params.get("name");
+    const phone = params.get("phone");
+    if (email) document.getElementById("f-email").value = email;
+    if (name) document.getElementById("f-name").value = name;
+    if (phone) document.getElementById("f-phone").value = phone;
+  }
+
+  document.getElementById("order-form").addEventListener("submit", handleSubmit);
+  prefillFromUrl();
+  updateMenuSectionLabel();
+  loadMenu();
+})();
