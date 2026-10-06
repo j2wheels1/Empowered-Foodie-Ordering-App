@@ -1,5 +1,6 @@
 /* Empowered Foodie — app logic
-   - Loads the weekly menu from a published Google Sheet CSV
+   - Loads the weekly menu from a published Google Sheet CSV (Standard
+     or Clean Eats, based on the client's Menu Group tag)
    - Renders it as a menu board, grouped by category under one heading
    - Builds a matching item picker on the order form
    - Submits order requests to a Google Apps Script endpoint
@@ -30,6 +31,31 @@
     const link = document.getElementById("footer-email");
     link.textContent = cfg.CONTACT_EMAIL;
     link.href = "mailto:" + cfg.CONTACT_EMAIL;
+  }
+
+  // ---------- Which menu this client sees ----------
+  // Carried over in the URL by start-order.html, from the client's
+  // Client Contacts "Menu Group" tag. Matched loosely (contains
+  // "clean") so "Clean Eats", "clean eats", etc. all work the same.
+  // Missing or unrecognized values default to the Standard menu.
+  const menuGroupParam = (new URLSearchParams(window.location.search).get("menu") || "").toLowerCase();
+  const isCleanEatsMenu = menuGroupParam.includes("clean");
+
+  function activeMenuCsvUrl() {
+    if (isCleanEatsMenu && cfg.MENU_CSV_URL_CLEAN_EATS && cfg.MENU_CSV_URL_CLEAN_EATS.indexOf("PASTE_") !== 0) {
+      return cfg.MENU_CSV_URL_CLEAN_EATS;
+    }
+    return cfg.MENU_CSV_URL;
+  }
+
+  // Updates the "This Week's Menu" heading to call out Clean Eats
+  // specifically, so there's no ambiguity about which menu someone is
+  // looking at. Safe no-op if the page doesn't have this element.
+  function updateMenuSectionLabel() {
+    const label = document.getElementById("menu-section-label");
+    if (label && isCleanEatsMenu) {
+      label.textContent = "This Week's Clean Eats Menu";
+    }
   }
 
   // ---------- Flexible column mapping ----------
@@ -181,12 +207,13 @@
   // ---------- Load menu ----------
   function loadMenu() {
     const picker = document.getElementById("item-picker");
-    if (!cfg.MENU_CSV_URL || cfg.MENU_CSV_URL.indexOf("PASTE_YOUR") === 0) {
+    const csvUrl = activeMenuCsvUrl();
+    if (!csvUrl || csvUrl.indexOf("PASTE_") === 0) {
       picker.innerHTML = '<p class="hint">Menu sheet isn\'t connected yet — see README.md to set MENU_CSV_URL.</p>';
       return;
     }
     picker.innerHTML = '<p class="hint">Loading this week\'s menu…</p>';
-    Papa.parse(cfg.MENU_CSV_URL, {
+    Papa.parse(csvUrl, {
       download: true,
       header: true,
       skipEmptyLines: true,
@@ -337,5 +364,6 @@
 
   document.getElementById("order-form").addEventListener("submit", handleSubmit);
   prefillFromUrl();
+  updateMenuSectionLabel();
   loadMenu();
 })();
