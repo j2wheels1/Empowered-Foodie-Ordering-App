@@ -120,5 +120,8 @@
     filterDishes(e.target.value);
   });
 
-  loadReheats();
+    // Lets the Clean Eats gate start the load only after an email is
+  // verified. The regular reheat pages load immediately, as before.
+  window.EF_loadReheats = loadReheats;
+  if (!window.REHEAT_REQUIRE_CLEAN_EATS) loadReheats();
 })();
