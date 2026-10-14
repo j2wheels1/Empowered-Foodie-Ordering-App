@@ -37,10 +37,19 @@
   let menuMode = "standard";
   if (menuGroupParam.includes("both") || (menuGroupParam.includes("clean") && menuGroupParam.includes("standard"))) {
     menuMode = "both";
-  } else if (menuGroupParam.includes("clean")) {
+   } else if (menuGroupParam.includes("clean")) {
     menuMode = "clean";
   }
 
+  // Remember this client's email and menu tag on this device, so the
+  // Clean Eats reheat links show up in the nav (and stay on the other
+  // pages). Done here too, not just at sign-in, so it works no matter
+  // how the client reached the order form.
+  try {
+    localStorage.setItem("ef_email", urlEmail);
+    localStorage.setItem("ef_menu_group", menuGroupParam);
+  } catch (e) { /* storage unavailable — no harm */ }
+  if (window.EF_injectCleanEatsNav) window.EF_injectCleanEatsNav();
   function isConfigured(url) {
     return !!url && url.indexOf("PASTE_") !== 0;
   }
