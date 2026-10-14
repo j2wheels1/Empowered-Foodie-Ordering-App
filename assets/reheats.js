@@ -95,9 +95,13 @@
     renderList(filtered);
   }
 
-  function loadReheats() {
+    function loadReheats() {
     const results = document.getElementById("reheats-results");
-    Papa.parse(CSV_PATH, {
+    // Cache-buster: the timestamp makes every page load fetch a fresh
+    // copy of the CSV, so weekly updates show up right away instead of
+    // after the browser's ~10 minute cache expires.
+    const csvUrl = CSV_PATH + (CSV_PATH.indexOf("?") === -1 ? "?" : "&") + "v=" + Date.now();
+    Papa.parse(csvUrl, {
       download: true,
       header: true,
       skipEmptyLines: true,
