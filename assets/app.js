@@ -193,8 +193,9 @@
         catEl.className = "item-picker-category";
         catEl.innerHTML = `<h4>${escapeHtml(cat)}${orderNote ? ` <span class="category-note">${escapeHtml(orderNote)}</span>` : ""}</h4>`;
 
-        byCat[cat].forEach((item, idx) => {
+             byCat[cat].forEach((item, idx) => {
           const needsServings = itemNeedsServings(cat, item.item);
+          const unit = section.key === "cleaneats" ? "containers" : "servings";
           const checkId = safeId(`chk-${section.key}-${cat}-${idx}`);
           const servingsId = safeId(`srv-${section.key}-${cat}-${idx}`);
           const row = document.createElement("div");
@@ -203,15 +204,18 @@
             <label class="item-select" for="${checkId}">
               <input type="checkbox" id="${checkId}" class="item-check"
                      data-category="${escapeAttr(cat)}" data-item="${escapeAttr(item.item)}"
+                     data-unit="${unit}"
                      ${needsServings ? `data-servings-id="${servingsId}"` : ""}>
               <span>${escapeHtml(item.item)}${item.description ? ` — <span class="hint" style="display:inline">${escapeHtml(item.description)}</span>` : ""}</span>
             </label>
             ${needsServings ? `
             <span class="servings-field">
-              <label class="servings-label" for="${servingsId}">Servings</label>
+              <label class="servings-label" for="${servingsId}">${unit === "containers" ? "Containers" : "Servings"}</label>
               <input type="number" min="1" max="20" step="1" id="${servingsId}" class="item-servings" disabled>
             </span>` : ""}
           `;
+          catEl.appendChild(row);
+        });
           catEl.appendChild(row);
         });
 
@@ -290,23 +294,25 @@
         return;
       }
       renderItemPicker(sections);
-    });
-  }
-
-  // ---------- Order submission ----------
-  function collectSelectedItems() {
+    function collectSelectedItems() {
     const checks = document.querySelectorAll(".item-check:checked");
     const selected = [];
     checks.forEach((chk) => {
       const item = chk.dataset.item;
       const category = chk.dataset.category;
       const servingsId = chk.dataset.servingsId;
+      const unit = chk.dataset.unit || "servings";
       if (servingsId) {
         const servingsInput = document.getElementById(servingsId);
         const servings = servingsInput ? servingsInput.value.trim() : "";
-        selected.push(`${item} (${category})${servings ? ` — ${servings} servings` : ""}`);
+        const unitWord = unit === "containers" && servings === "1" ? "container" : unit;
+        selected.push(`${item} (${category})${servings ? ` — ${servings} ${unitWord}` : ""}`);
       } else {
         selected.push(`${item} (${category})`);
+      }
+    });
+    return selected.join("; ");
+  }
       }
     });
     return selected.join("; ");
