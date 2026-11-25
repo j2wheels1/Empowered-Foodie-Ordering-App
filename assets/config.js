@@ -33,6 +33,6 @@ window.EF_CONFIG = {
   // page covers. Update just the text in quotes below each week —
   // never change the part before the colon. Leave blank ("") to show
   // just the plain label with no dates.
-  THIS_WEEK_DATES: "Nov 8 – Nov 14",
-  NEXT_WEEK_DATES: "Nov 15 – Nov 21"
+  THIS_WEEK_DATES: "Nov 29 – Dec 5",
+  NEXT_WEEK_DATES: "Dec 6 – Dec 12"
 };
